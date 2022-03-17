@@ -1,0 +1,159 @@
+//is_admin er kaj/////
+1.protheme auth je call kora ache oit maigration er database is_admin and phone name aro 2ta table nibo coloumn.
+2.bolien dhorbo string bad diya.nullable() dhorbo.and migrate.
+3.erpor route jaya admin.php name route call korbo.
+4.route php call korbo ortha web.php te jemon opore ja ache ta copy kore admin.php te paste korte hobe.
+5.erpor providers jaite hbe tar vitor appsprovider jaite hobe.
+6.er por routh fille ache seta copy kore admin er jonno paset korte hobe middlaware namespace thik thakbe groupe sudhu admin
+boste hobe.
+7. models jaya users model er vitor is_admin ar phone call korte hobe.
+8.erpor middleware call korte hobe IsAdmin name.
+ata controler er motoi call korte hoi controlle jaigi sudhu middleware bosatehobe.
+9.erpor handelae vitor jaya condistion dite hobe. aivabe auth jeta ache orthat user ki admin 
+jodi admin hoi tahole is_admin==1 ta checke korbe 
+admin jabe na hole home chole jab.
+
+ if(auth()->user()->is_admin==1){
+             return $next($request);
+      }
+ return redirect()->route('home')->with('error','You are not a admin');
+
+10.erpor je ami Isadmin middleware use kortechi ata abr HTTP er vitor kernal 
+route middleware jaya link kore dite hobe aivabe.
+'is_admin' => \App\Http\Middleware\IsAdmin::class,
+
+11.er por admin route jaya...route call korte hobe jta dorkae admin naki admin/home nake admin/dashboard.
+erpor amra je middleware use kortechi stao call korte hobe name er pore name er moto kore name()->middleware('is_admin==1')
+othoba group onujai group besi use kora hoi
+Route::group(['namespace'=>'App\Http\Controllers\Admin','middleware'=>'is_admin'],function(){
+
+
+
+/////////frontend////////
+
+1.prothome public frontend name akta file banai tate css/js plugin file gula rakhte hobe.
+2.views layouts vitor app.blade php index html gula paste korte hobe.
+2.erpor front-partial er vitor main nav- ar colpase nab rakhte hobe...
+3.erpor view er vitor fronten name file rakhe index.blade page app.blade je index.html rakhchi tate js and css link rakhte
+pura ta cut kore ane index.html er vitor pase korte hobe.and app .
+blade obosy include korte hobe tate footer ar header thakbe cssa andfs.
+
+
+
+////product detaials//////
+1.frontend er vitor ar akta file product name nite hobe er por prodouct dtails file ta rakhte hobe.
+
+
+////////setting globale///////
+1.apps provider er jaya use DB;
+2.tpr boot er vitor setting table call korte hobe .
+2.er por share view() korte hobe.
+
+//campaigns///
+1.migration create korte hobe.
+2.Admin/Campaign controller banabo and Model.
+
+
+///wishlist////
+1.migration create korte hobe.
+2.review controller use kora hoise.
+.3 erpor route er link dhore sathe row->slug dhorlei kaj hobe.
+
+///////add to cart////
+1.prothome add cart er form hidden akta input nite hobe tate id dhorte hobe.
+2.er por price newar jonn indput hidden kore condistion use kore price dhorbo.
+3.ajax use kore add cart korbo.
+4.modal ta k hide ar table reset korbo na kno na akadhik productcart korte pare.
+5.Fron/ Cartcontroller newa.
+6.erpor shopping cart add korte hobe.bumbummen99 shopin cart composer kore.
+and check korte hobe config er vitor Cart.php ache naki na thkele nite hobe er por and tax="0" kore dite hobe.
+7.Cart::add([])er moddhe array akare patate hobe.abong 4 ta jinis obosy thakbe id,name,qty,price,weight
+and option nite hobe jta jta lage ar ki
+7 from e route('add_to.cart.quick) add to cart er sathe aikhne quickview use kora hoise ata quick view je tai.
+8.erpor heade je cart icon ta ache oi kahne cart::total() call korte hboe. ta mot tk dekhabe jog kore.
+
+///////ajax update/reload cart//////////
+
+1.App.blade te ajax cart code korte hobe jate sob jaigai pai.
+2.ajax link cdn file use korte hobe.
+3. function cart() {
+         $.ajax({
+          type:'get',
+          url:'{{ route('all.cart') }}',
+          dataType:'json',
+          success:function(data){  
+           $('.cart_qty').empty();
+           $('.cart_total').empty();
+           $('.cart_qty').append(data.cart_qty);
+           $('.cart_total').append(data.cart_total);
+          }
+        });
+    }
+
+    $(document).ready(function(event){
+        cart();
+    });
+* aikhne append(data.cart_qty) ta use kora hoise karon hoilo cart::count er bodol..and nab bareo cart::Count use korte
+hobe na tar bodol sudhu  <div class="cart_count"><span class="cart_qty"></span></div> aive use korte hobe.
+mone rakhte hobe aikhane class dhore kaj korthe hobe span er viteor rakhe.
+ar cart() ata abr jekhe ajax diya add cart kora hoise quickview oitae call kore dite hbe ba rakhte hboe.
+empty use kora hoise ai karone je mot subtotal k  alad alada show kore jog kore nai tai use kora.
+4.jodi add cart animation system thake tahole foreach chalaite hobe.
+5.er por route call kora trpor controller kaj
+
+
+///////add to cart- product-details///
+
+1.quick view te jmon kore add cart kora hoise thik temni vabei korte hboe.
+
+///cart page jabe epr//
+1.frontend er vitor cart name akta floder banabo.
+2.erpro cart.blade.php te cart section  ta pase korte hobe.
+3.erpor route call korte hobe trpr controller jaya cart::content(); compact korte hboe.
+2.foreach chalaite hobe .
+3.color ar size to onk gula thakebe tai product tabel call korte hobe .
+4.gun korte hobe $row->qty*$row->price
+
+////cart delete////
+1.prothome id dhorte hobe trpor ajax call korte hobe 
+2.trpr route jaite hobe er controller jaya cart::remove($rowId) korte hbe.
+
+///cart update qty///
+1.prothome input tate class dhorte hobe qty.
+2.erpor ajax call
+/qty update with ajax
+	   $('body').on('blur','.qty',function(){
+	       let qty=$(this).val();
+	       let rowId=$(this).data('id');
+		      $.ajax({
+			      url:'{{ url('cart_product/updateqty/') }}/'+rowId+'/'+qty,
+			      type:'get',
+			      async:false,
+			      success:function(data){
+			         toastr.success(data);
+			         location.reload();
+			      }
+			    });
+		  });
+.erpor route call korte hboe.
+3.erpor color and size qty update er moto..
+
+///baki wishlist er kaj
+1.fornter cart er moddhe wishlist.blade.php banate hobe.
+2.route call kora and controller jaya product er sathi join korte hobe.
+3.wishlist delete korara jonno route create kora sathe id ta dhore
+4.erpor wishlist clear korte hobe delete er motoi sudhu id jaigai user_id.
+
+///category wise product shop page.
+1.protheome  view er vitor product er vitor category_blade.php er viteor shop.html ta paste korte hobe.
+2.main nav ar collaps nav jaya href="route('categorywise.product',$row->id)" ta call korte hobe.
+3.erpor category_product page dynamic korte hobe.
+4.erpor subcategory je call kora hoise oita route coll korte hobe.ref="route('subcategorywise.product',$row->id)"
+er por route. 
+/////paginate er kaj
+1.apps provider vitor boot 
+  Paginator::useBootstrap();
+ata dite hboe.
+ar
+link kore dite hobe
+use Illuminate\Pagination\Paginator;
